@@ -30,10 +30,18 @@ userServer.get('/api/users/:id', (req, res) => {
 // Creates New User
 userServer.post('/api/users', (req, res) => {
     let user = req.body;
+
     UserModel.insert(user)
         .then(user => {
-            res.status(201).json(user);
-        });
+            if (!user.name || !user.bio){
+                res.status(400).json({ message: "Please provide name and bio for the user" });
+            } else {
+                res.status(201).json(user);
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "There was an error while saving the user to the database" })
+        })
 });
 // Delete Users 
 userServer.delete('/api/users/:id', (req, res) => {

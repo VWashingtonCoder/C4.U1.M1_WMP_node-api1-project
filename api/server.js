@@ -14,7 +14,10 @@ userServer.get('/api/users', (req, res) => {
     UserModel.find()
         .then(users => {
             res.json(users);
-        });
+        })
+        .catch(err => {
+            res.status(500).json({ message: "The users information could not be retrieved" })
+        })
 });
 //Get Specified User
 userServer.get('/api/users/:id', (req, res) => {
@@ -25,6 +28,9 @@ userServer.get('/api/users/:id', (req, res) => {
             } else {
                 res.json(user)
             }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "The user information could not be retrieved" })
         })
 })
 // Creates New User
@@ -52,7 +58,10 @@ userServer.delete('/api/users/:id', (req, res) => {
         } else {
             res.json(user);
         }
-    });
+    })
+    .catch(err => {
+        res.status(500).json({ message: "The user could not be removed" })
+    })
 });
 // Update Users
 userServer.put('/api/users/:id', (req, res) => {
@@ -63,9 +72,14 @@ userServer.put('/api/users/:id', (req, res) => {
         .then(updatedUser => {
             if(!updatedUser){
                 res.status(404).json({ message: "The user with the specified ID does not exist" })
+            } else if(!updatedUser.name || !updatedUser.bio){
+                res.status(400).json({ message: "Please provide name and bio for the user" })
             } else {
                 res.json(updatedUser)
             }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "The user information could not be modified" })
         })
 })
 
